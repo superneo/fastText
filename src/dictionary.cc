@@ -334,6 +334,7 @@ void Dictionary::reset(std::istream& in) const {
   }
 }
 
+// [neo] for word embedding learning (like skipgram)
 int32_t Dictionary::getLine(std::istream& in,
                             std::vector<int32_t>& words,
                             std::minstd_rand& rng) const {
@@ -357,6 +358,7 @@ int32_t Dictionary::getLine(std::istream& in,
   return ntokens;
 }
 
+// [neo] for supervised model learning (like classifier)
 int32_t Dictionary::getLine(std::istream& in,
                             std::vector<int32_t>& words,
                             std::vector<int32_t>& labels) const {
@@ -385,6 +387,7 @@ int32_t Dictionary::getLine(std::istream& in,
   return ntokens;
 }
 
+// [neo] for addition of char(subword)/word ngrams
 void Dictionary::pushHash(std::vector<int32_t>& hashes, int32_t id) const {
   if (pruneidx_size_ == 0 || id < 0) return;
   if (pruneidx_size_ > 0) {
@@ -479,6 +482,7 @@ void Dictionary::prune(std::vector<int32_t>& idx) {
       pruneidx_[ngram - nwords_] = j;
       j++;
     }
+    // [neo] idx having nwords_ of 'word' entrites first + j of 'subword ngram' entries second
     idx.insert(idx.end(), ngrams.begin(), ngrams.end());
   }
   pruneidx_size_ = pruneidx_.size();

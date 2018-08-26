@@ -86,6 +86,8 @@ for line in fin:
         gold.append(float(tline[2]))
     else:
         drop = drop + 1.0
+        oov_word = word1 if word1 not in vectors else word2
+        print("OOV word: <" + oov_word + ">")
 fin.close()
 
 corr = stats.spearmanr(mysim, gold)
@@ -94,3 +96,7 @@ print(
     "{0:20s}: {1:2.0f}  (OOV: {2:2.0f}%)"
     .format(dataset, corr[0] * 100, math.ceil(drop / nwords * 100.0))
 )
+print("p-value: " + str(corr[1]))
+corr, pval = stats.pearsonr(mysim, gold)
+print("pearson R corr: " + str(corr) + ", p-value: " + str(pval))
+
