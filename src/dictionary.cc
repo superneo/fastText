@@ -260,6 +260,74 @@ void Dictionary::readFromFile(std::istream& in) {
   }
 }
 
+bool Dictionary::readSyllable(std::istream& in, std::string& syllable) const
+{
+  int c;
+  std::streambuf& sb = *in.rdbuf();
+  syllable.clear();
+  while ((c = sb.sbumpc()) != EOF) {
+    if (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == '\v' ||
+        c == '\f' || c == '\0') {
+      if (syllable.empty()) {
+        if (c == '\n') {
+          syllable += EOS;
+          return true;
+        }
+        continue;
+      } else {
+        if (c == '\n')
+          sb.sungetc();
+        return true;
+      }
+    } else if ((c & 0xC0) == 0x80) {
+      if (syllable.empty()) {
+        throw std::invalid_argument(
+          "Invalid byte sequence in the inputstream in.");
+      }
+      syllable.push_back(c);
+      continue;
+    } else {
+      // only ascii-characters or start byte of multi-byte characters allowed
+      if (syllable.empty()) {
+        syllable.push_back(c);
+      } else {
+        sb.sungetc();
+        return true;
+      }
+    }
+  }
+  // trigger eofbit
+  in.get();
+  return !syllable.empty();
+}
+
+void Dictionary::readSyllablesFromFile(std::istream& in) {
+  std::string syllable;
+  int64_t minThreshold = 1;
+  while (readSyllable(in, syllable)) {
+    add(syllable);
+    if (ntokens_ % 1000000 == 0 && args_->verbose > 1) {
+      std::cerr << "\rRead " << ntokens_  / 1000000 << "M words" << std::flush;
+    }
+    if (size_ > 0.75 * MAX_VOCAB_SIZE) {
+      minThreshold++;
+      threshold(minThreshold, minThreshold);
+    }
+  }
+  threshold(args_->minCount, args_->minCountLabel);
+  initTableDiscard();
+  initNgrams();
+  if (args_->verbose > 0) {
+    std::cerr << "\rRead " << ntokens_  / 1000000 << "M words" << std::endl;
+    std::cerr << "Number of words:  " << nwords_ << std::endl;
+    std::cerr << "Number of labels: " << nlabels_ << std::endl;
+  }
+  if (size_ == 0) {
+    throw std::invalid_argument(
+        "Empty vocabulary. Try a smaller -minCount value.");
+  }
+}
+
 void Dictionary::threshold(int64_t t, int64_t tl) {
   sort(words_.begin(), words_.end(), [](const entry& e1, const entry& e2) {
       if (e1.type != e2.type) return e1.type < e2.type;

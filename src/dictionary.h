@@ -94,6 +94,8 @@ class Dictionary {
     void add(const std::string&);
     bool readWord(std::istream&, std::string&) const;
     void readFromFile(std::istream&);
+    bool readSyllable(std::istream&, std::string&) const;
+    void readSyllablesFromFile(std::istream&);
     std::string getLabel(int32_t) const;
     void save(std::ostream&) const;
     void load(std::istream&);
