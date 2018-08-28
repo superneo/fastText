@@ -659,7 +659,8 @@ void FastText::train(const Args args) {
     throw std::invalid_argument(
         args_->input + " cannot be opened for training!");
   }
-  dict_->readFromFile(ifs);
+  //dict_->readFromFile(ifs);
+  dict_->readSyllablesFromFile(ifs);
   ifs.close();
 
   if (args_->pretrainedVectors.size() != 0) {

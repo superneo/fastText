@@ -266,6 +266,9 @@ bool Dictionary::readSyllable(std::istream& in, std::string& syllable) const
   std::streambuf& sb = *in.rdbuf();
   syllable.clear();
   while ((c = sb.sbumpc()) != EOF) {
+    if ((!syllable.empty()) && ((syllable[0] & 0xC0) == 0x80)) {
+      syllable.clear();
+    }
     if (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == '\v' ||
         c == '\f' || c == '\0') {
       if (syllable.empty()) {
@@ -280,20 +283,25 @@ bool Dictionary::readSyllable(std::istream& in, std::string& syllable) const
         return true;
       }
     } else if ((c & 0xC0) == 0x80) {
-      if (syllable.empty()) {
-        throw std::invalid_argument(
-          "Invalid byte sequence in the inputstream in.");
+      if (!syllable.empty()) {
+        //throw std::invalid_argument(
+        //  "Invalid byte sequence in the inputstream in.");
+        syllable.push_back(c);
       }
-      syllable.push_back(c);
       continue;
-    } else {
+    } else if (((0 < c) && (c < 128)) || ((c & 0xC0) == 0xC0)) {
       // only ascii-characters or start byte of multi-byte characters allowed
       if (syllable.empty()) {
         syllable.push_back(c);
+        continue;
       } else {
         sb.sungetc();
         return true;
       }
+    } else {
+      // cannot happen in the utf-8 encoding
+      throw std::invalid_argument(
+        "Invalid byte sequence in the utf8 encoding: " + std::to_string(c));
     }
   }
   // trigger eofbit
@@ -307,7 +315,7 @@ void Dictionary::readSyllablesFromFile(std::istream& in) {
   while (readSyllable(in, syllable)) {
     add(syllable);
     if (ntokens_ % 1000000 == 0 && args_->verbose > 1) {
-      std::cerr << "\rRead " << ntokens_  / 1000000 << "M words" << std::flush;
+      std::cerr << "\rRead " << ntokens_  / 1000000 << "M syllables" << std::flush;
     }
     if (size_ > 0.75 * MAX_VOCAB_SIZE) {
       minThreshold++;
@@ -318,8 +326,8 @@ void Dictionary::readSyllablesFromFile(std::istream& in) {
   initTableDiscard();
   initNgrams();
   if (args_->verbose > 0) {
-    std::cerr << "\rRead " << ntokens_  / 1000000 << "M words" << std::endl;
-    std::cerr << "Number of words:  " << nwords_ << std::endl;
+    std::cerr << "\rRead " << ntokens_  / 1000000 << "M syllables" << std::endl;
+    std::cerr << "Number of syllables:  " << nwords_ << std::endl;
     std::cerr << "Number of labels: " << nlabels_ << std::endl;
   }
   if (size_ == 0) {
@@ -412,7 +420,8 @@ int32_t Dictionary::getLine(std::istream& in,
 
   reset(in);
   words.clear();
-  while (readWord(in, token)) {
+  //while (readWord(in, token)) {
+  while (readSyllable(in, token)) {
     int32_t h = find(token);
     int32_t wid = word2int_[h];
     if (wid < 0) continue;
@@ -437,7 +446,8 @@ int32_t Dictionary::getLine(std::istream& in,
   reset(in);
   words.clear();
   labels.clear();
-  while (readWord(in, token)) {
+  //while (readWord(in, token)) {
+  while (readSyllable(in, token)) {
     uint32_t h = hash(token);
     int32_t wid = getId(token, h);
     entry_type type = wid < 0 ? getType(token) : getType(wid);
