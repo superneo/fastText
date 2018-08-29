@@ -291,7 +291,25 @@ bool Dictionary::readSyllable(std::istream& in, std::string& syllable) const
       continue;
     } else if (((0 < c) && (c < 128)) || ((c & 0xC0) == 0xC0)) {
       // only ascii-characters or start byte of multi-byte characters allowed
+      if (c == args_->label[0] && syllable.empty()) {
+        sb.sungetc();
+        std::string tmp_syllable(args_->label.size(), ' ');
+        int32_t bytes = sb.sgetn(&tmp_syllable[0], args_->label.size());
+        if (tmp_syllable == args_->label) {  // "__label__" by default
+          syllable = tmp_syllable;
+        } else {
+          syllable.push_back(c);
+          sb.pubseekoff(1 - bytes, std::ios_base::cur, std::ios_base::in);
+          //for (int32_t i = 0; i < tmp_syllable.size() - 1; ++i) {
+          //  sb.sungetc();
+          //}
+        }
+        continue;
+      }
       if (syllable.empty()) {
+        syllable.push_back(c);
+        continue;
+      } else if (syllable.find(args_->label) == 0) {  // when parsing a label
         syllable.push_back(c);
         continue;
       } else {
