@@ -659,8 +659,12 @@ void FastText::train(const Args args) {
     throw std::invalid_argument(
         args_->input + " cannot be opened for training!");
   }
-  //dict_->readFromFile(ifs);
-  dict_->readSyllablesFromFile(ifs);
+
+  if (args_->jamoLevel) {
+    dict_->readJamoWordsFromFile(ifs);
+  } else {
+    dict_->readFromFile(ifs);
+  }
   ifs.close();
 
   if (args_->pretrainedVectors.size() != 0) {

@@ -16,6 +16,7 @@
 #include <random>
 #include <memory>
 #include <unordered_map>
+#include <wchar.h>  // [neo]
 
 #include "args.h"
 #include "real.h"
@@ -62,6 +63,7 @@ class Dictionary {
         const std::vector<int32_t>& hashes,
         int32_t n) const;
 
+    wchar_t buffer_[MAX_LINE_SIZE * 10 * 3 + 1];  // [neo]
 
    public:
     static const std::string EOS;
@@ -90,12 +92,14 @@ class Dictionary {
         const std::string&,
         std::vector<int32_t>&,
         std::vector<std::string>&) const;
+    void computeJamoSubwords(const std::string&, std::vector<int32_t>&) const;  // [neo]
     uint32_t hash(const std::string& str) const;
     void add(const std::string&);
     bool readWord(std::istream&, std::string&) const;
     void readFromFile(std::istream&);
-    bool readSyllable(std::istream&, std::string&) const;
-    void readSyllablesFromFile(std::istream&);
+    bool readSyllable(std::istream&, std::string&) const;  // [neo]
+    bool readJamoWord(std::istream&, std::string&) const;  // [neo]
+    void readJamoWordsFromFile(std::istream&);  // [neo]
     std::string getLabel(int32_t) const;
     void save(std::ostream&) const;
     void load(std::istream&);
