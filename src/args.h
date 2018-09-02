@@ -41,13 +41,16 @@ class Args {
     loss_name loss;
     model_name model;
     int bucket;
-    int minn;
-    int maxn;
+    int minn;  // [neo] min subword (eumjeol) n-gram size
+    int maxn;  // [neo] max subword (eumjeol) n-gram size
+    int minnJamo;  // [neo] min subword jamo-level n-gram size
+    int maxnJamo;  // [neo] max subword jamo-level n-gram size
     int thread;
     double t;
     std::string label;
     int verbose;
     std::string pretrainedVectors;
+    bool jamoLevel;  // [neo] a flag to tell if running in jamo level
     bool saveOutput;
 
     bool qout;

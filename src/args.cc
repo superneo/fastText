@@ -30,12 +30,15 @@ Args::Args() {
   bucket = 2000000;
   minn = 3;
   maxn = 6;
+  minnJamo = 0;
+  maxnJamo = 0;
   thread = 12;
   lrUpdateRate = 100;
   t = 1e-4;
   label = "__label__";
   verbose = 2;
   pretrainedVectors = "";
+  jamoLevel = false;
   saveOutput = false;
 
   qout = false;
@@ -140,6 +143,10 @@ void Args::parseArgs(const std::vector<std::string>& args) {
         minn = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-maxn") {
         maxn = std::stoi(args.at(ai + 1));
+      } else if (args[ai] == "-minnJamo") {
+        minnJamo = std::stoi(args.at(ai + 1));
+      } else if (args[ai] == "-maxnJamo") {
+        maxnJamo = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-thread") {
         thread = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-t") {
@@ -150,6 +157,9 @@ void Args::parseArgs(const std::vector<std::string>& args) {
         verbose = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-pretrainedVectors") {
         pretrainedVectors = std::string(args.at(ai + 1));
+      } else if (args[ai] == "-jamoLevel") {
+        jamoLevel = true;
+        ai--;
       } else if (args[ai] == "-saveOutput") {
         saveOutput = true;
         ai--;
