@@ -9,7 +9,7 @@
 
 CXX = c++
 CXXFLAGS = -pthread -std=c++0x -march=native
-OBJS = args.o dictionary.o productquantizer.o matrix.o qmatrix.o vector.o model.o utils.o fasttext.o
+OBJS = args.o dictionary.o productquantizer.o matrix.o qmatrix.o vector.o model.o utils.o korean_nlp_tools.o fasttext.o
 INCLUDES = -I.
 
 opt: CXXFLAGS += -O3 -funroll-loops
@@ -41,6 +41,9 @@ model.o: src/model.cc src/model.h src/args.h
 
 utils.o: src/utils.cc src/utils.h
 	$(CXX) $(CXXFLAGS) -c src/utils.cc
+
+korean_nlp_tools.o: src/korean_nlp_tools.cc src/korean_nlp_tools.h
+	$(CXX) $(CXXFLAGS) -c src/korean_nlp_tools.cc
 
 fasttext.o: src/fasttext.cc src/*.h
 	$(CXX) $(CXXFLAGS) -c src/fasttext.cc
