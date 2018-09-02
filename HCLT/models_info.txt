@@ -1,0 +1,144 @@
+## word (w1gram)
+
+# korean_go_kr skipgram learning
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/word/sg_kgk_word_w1gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 1 -minn 3 -maxn 6 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/word/sup_nsmc_only_word_w1gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 1 -minn 3 -maxn 6 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only prediction with probabilities
+./fasttext predict-prob HCLT/models/word/sup_nsmc_only_word_w1gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/word/pred_nsmc_only_word_w1gram.predict
+
+# nsmc dataset only prediction with probabilities evaluation
+./HCLT/eval_predictions.py HCLT/data/nsmc_test.txt HCLT/preds/word/pred_nsmc_only_word_w1gram.predict HCLT/evals/word/eval_nsmc_only_word_w1gram.txt
+
+
+# korean_go_kr word embedding + nsmc dataset supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/word/sup_nsmc_kgk_word_w1gram -pretrainedVectors HCLT/models/word/sg_kgk_word_w1gram.vec -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 1 -minn 3 -maxn 6 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities
+./fasttext predict-prob HCLT/models/word/sup_nsmc_kgk_word_w1gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/word/pred_nsmc_kgk_word_w1gram.predict
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities evaluation
+./HCLT/eval_predictions.py HCLT/data/nsmc_test.txt HCLT/preds/word/pred_nsmc_kgk_word_w1gram.predict HCLT/evals/word/eval_nsmc_kgk_word_w1gram.txt
+
+-------------------------------------------------------------------------------------------
+
+## word (w3gram)
+
+# korean_go_kr skipgram learning
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/word/sg_kgk_word_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 3 -maxn 6 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/word/sup_nsmc_only_word_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 3 -maxn 6 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only prediction with probabilities
+./fasttext predict-prob HCLT/models/word/sup_nsmc_only_word_w3gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/word/pred_nsmc_only_word_w3gram.predict
+
+# nsmc dataset only prediction with probabilities evaluation
+./HCLT/eval_predictions.py HCLT/data/nsmc_test.txt HCLT/preds/word/pred_nsmc_only_word_w3gram.predict HCLT/evals/word/eval_nsmc_only_word_w3gram.txt
+
+
+# korean_go_kr word embedding + nsmc dataset supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/word/sup_nsmc_kgk_word_w3gram -pretrainedVectors HCLT/models/word/sg_kgk_word_w3gram.vec -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 3 -maxn 6 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities
+./fasttext predict-prob HCLT/models/word/sup_nsmc_kgk_word_w3gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/word/pred_nsmc_kgk_word_w3gram.predict
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities evaluation
+./HCLT/eval_predictions.py HCLT/data/nsmc_test.txt HCLT/preds/word/pred_nsmc_kgk_word_w3gram.predict HCLT/evals/word/eval_nsmc_kgk_word_w3gram.txt
+
+-------------------------------------------------------------------------------------------
+
+## syllable embedding (w1gram)
+
+# korean_go_kr skipgram learning
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/korean_go_kr_syllable_w1gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 1 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_only_syllable_w1gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 1 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only prediction with probabilities
+./fasttext predict-prob HCLT/models/nsmc_only_syllable_w1gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_only_syllable_w1gram.predict
+
+# nsmc dataset only prediction with probabilities evaluation
+./eval_predictions.py data/nsmc_test.txt preds/nsmc_only_syllable_w1gram.predict evals/nsmc_only_syllable_w1gram.txt
+
+
+# korean_go_kr word embedding + nsmc dataset supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_kgk_syllable_w1gram -pretrainedVectors HCLT/models/korean_go_kr_syllable_w1gram.vec -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 1 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities
+./fasttext predict-prob HCLT/models/nsmc_kgk_syllable_w1gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_kgk_syllable_w1gram.predict
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities evaluation
+./eval_predictions.py data/nsmc_test.txt preds/nsmc_kgk_syllable_w1gram.predict evals/nsmc_kgk_syllable_w1gram.txt
+
+-------------------------------------------------------------------------------------------
+
+## syllable n-gram embedding (w3gram)
+
+# korean_go_kr skipgram learning
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/korean_go_kr_syllable_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_only_syllable_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only prediction with probabilities
+./fasttext predict-prob HCLT/models/nsmc_only_syllable_w3gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_only_syllable_w3gram.predict
+
+# nsmc dataset only prediction with probabilities evaluation
+./eval_predictions.py data/nsmc_test.txt preds/nsmc_only_syllable_w3gram.predict evals/nsmc_only_syllable_w3gram.txt
+
+
+# korean_go_kr word embedding + nsmc dataset supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_kgk_syllable_w3gram -pretrainedVectors HCLT/models/korean_go_kr_syllable_w3gram.vec -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities
+./fasttext predict-prob HCLT/models/nsmc_kgk_syllable_w3gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_kgk_syllable_w3gram.predict
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities evaluation
+./eval_predictions.py data/nsmc_test.txt preds/nsmc_kgk_syllable_w3gram.predict evals/nsmc_kgk_syllable_w3gram.txt
+
+-------------------------------------------------------------------------------------------
+
+## jamo n-gram embedding (test)
+
+./fasttext skipgram -input HCLT/data/toy_corpus.txt -output HCLT/models/jamo/sg_toy_jamo_w1gram -jamoLevel -lr 0.025 -dim 100 -ws 2 -epoch 1 -minCount 1 -neg 2 -loss ns -bucket 2000000 -wordNgrams 1 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 10 -t 1e-4 -lrUpdateRate 10
+
+===================================================================================================================================================
+
+## skipgram models
+
+./fasttext skipgram -input HCLT/data/wiki_space_tokenizer_filtered.txt -output HCLT/models/wiki_space_tokenizer_filtered_20180825_1 -lr 0.05 -dim 100 -ws 10 -epoch 20 -minCount 5 -neg 10 -loss ns -bucket 2000000 -minn 1 -maxn 3 -thread 4 -t 1e-4 -lrUpdateRate 100
+
+./fasttext skipgram -input HCLT/data/wiki_space_tokenizer_filtered.txt -output HCLT/models/wiki_space_tokenizer_filtered_20180827_1 -lr 0.025 -dim 100 -ws 5 -epoch 1 -minCount 5 -neg 5 -loss ns -bucket 2000000 -minn 1 -maxn 1 -thread 4 -t 1e-4 -lrUpdateRate 100
+
+## supervised models
+
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_20180826_1
+
+./fasttext predict-prob HCLT/models/nsmc_20180826_1.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_20180826_1.predict
+
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_20180826_2 -pretrainedVectors HCLT/models/wiki_space_tokenizer_filtered_20180825_1.vec
+
+./fasttext predict-prob HCLT/models/nsmc_20180826_2.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_20180826_2.predict
+
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_20180826_3 -saveOutput
+
+## 20180828
+
+./fasttext skipgram -input HCLT/data/korean_go_kr.txt -output HCLT/models/korean_go_kr_20180828_1 -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -minn 1 -maxn 3 -thread 4 -t 1e-4 -lrUpdateRate 100
+
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_20180828_1
+
+./fasttext predict-prob HCLT/models/nsmc_20180828_1.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_20180828_1.predict
+
+./eval_predictions.py data/nsmc_test.txt preds/nsmc_20180828_1.predict diffs/diffs_20180828_1.txt
+
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_20180828_2 -pretrainedVectors HCLT/models/korean_go_kr_20180828_1.vec
+
+./fasttext predict-prob HCLT/models/nsmc_20180828_2.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_20180828_2.predict
+
+./eval_predictions.py data/nsmc_test.txt preds/nsmc_20180828_2.predict diffs/diffs_20180828_2.txt
+
