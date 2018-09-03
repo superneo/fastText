@@ -11,7 +11,7 @@
 #include "korean_nlp_tools.h"
 
 #include <assert.h>
-
+//#include <atomic>  // [neo]
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -200,7 +200,27 @@ void Dictionary::computeSubwords(const std::string& word,
 // [neo]
 void Dictionary::computeJamoSubwords(const std::string& word,
                                      std::vector<int32_t>& ngrams) const {
-    std::cout << "[neo] [computeJamoSubwords] word: " << word << std::endl;
+  // std::cout << "[neo] [computeJamoSubwords] word: " << word << std::endl;
+  for (size_t i = 0; i < word.size(); i++) {
+    std::string ngram;
+    if ((word[i] & 0xC0) == 0x80) continue;
+    for (size_t j = i, n = 1; j < word.size() && n <= args_->maxnJamo; n++) {
+      ngram.push_back(word[j++]);
+      while (j < word.size() && (word[j] & 0xC0) == 0x80) {
+        ngram.push_back(word[j++]);
+      }
+      if ((n % 3 == 0) && (i % 9 == 1)) {
+        // std::cout << "   [jamo subword info] exclude ngram:" << ngram << std::endl;
+        continue;
+      }
+      if (n >= args_->minnJamo && !(n == 1 && (i == 0 || j == word.size()))) {
+        int32_t h = hash(ngram) % args_->bucket;
+        ngrams.push_back(nwords_ + h);
+        // std::cout << "   [jamo subword info] ngram:" << ngram
+        //           << " h:" << h << " nwords_:" << nwords_ << std::endl;
+      }
+    }
+  }
 }
 
 void Dictionary::initNgrams() {
@@ -210,12 +230,19 @@ void Dictionary::initNgrams() {
     words_[i].subwords.push_back(i);
     if (words_[i].word != EOS) {
       computeSubwords(word, words_[i].subwords);
-      if (isLastCharKoreanSyllable(words_[i].word)) {
+      if (args_->jamoLevel && isLastCharKoreanSyllable(words_[i].word)) {
         std::wstring wcs_str = mbs_to_wcs(word);
         const wchar_t* wcptr = wcs_str.c_str();
         size_t seq_len = break_hangul_syllables(wcptr, buffer_, MAX_LINE_SIZE * 10 * 3 + 1);
         std::string jamo_seq = wcs_to_mbs(std::wstring(buffer_));
         computeJamoSubwords(jamo_seq, words_[i].subwords);
+        // [neo] add the "<word>" string hash by the line in the paper
+        // (http://aclweb.org/anthology/P18-1226)
+        // (but not a jamo sequence but the original word itself as there's no difference):
+        // "Lastly, we add the total jamo sequence of a word including < and >
+        // to the set of extracted character-level n-grams."
+        int32_t h = hash(word) % args_->bucket;
+        words_[i].subwords.push_back(nwords_ + h);
       }
     }
   }
@@ -345,6 +372,10 @@ bool Dictionary::readSyllable(std::istream& in, std::string& syllable) const
 bool Dictionary::readJamoWord(std::istream& in, std::string& word) const
 {
   int c;
+  // std::atomic<int> curWordLen(0);  // number of characters in the current word token
+  // std::atomic<int> curCharLen(0);
+  // std::atomic<int> curCharIdx(0);
+  // std::atomic<bool> isKoSylSeq(false);
   int curWordLen = 0;  // number of characters in the current word token
   int curCharLen = 0;
   int curCharIdx = 0;
@@ -352,7 +383,7 @@ bool Dictionary::readJamoWord(std::istream& in, std::string& word) const
   std::streambuf& sb = *in.rdbuf();
   word.clear();
   while ((c = sb.sbumpc()) != EOF) {
-    std::cout << "[readJamoWord] " << c << std::endl;
+    // std::cout << "[readJamoWord] " << c << std::endl;
     if ((!word.empty()) && ((word[0] & 0xC0) == 0x80)) {
       word.clear();
     }
@@ -389,6 +420,7 @@ bool Dictionary::readJamoWord(std::istream& in, std::string& word) const
             if (isKoSylSeq != isLastCharKo) {
               word.erase(word.size() - curCharLen);
               sb.pubseekoff(-curCharLen, std::ios_base::cur, std::ios_base::in);
+              // std::cout << "\t[debug] [readJamoWord] curCharLen: " << curCharLen << std::endl;
               return true;
             }
           }
@@ -450,7 +482,7 @@ void Dictionary::readJamoWordsFromFile(std::istream& in) {
   std::string word;
   int64_t minThreshold = 1;
   while (readJamoWord(in, word)) {
-    std::cout << "  (while/readJamoWordsFromFile) word:(" << word << ")" << std::endl;
+    // std::cout << "  (while/readJamoWordsFromFile) word:(" << word << ")" << std::endl;
     add(word);
     if (ntokens_ % 1000000 == 0 && args_->verbose > 1) {
       std::cerr << "\rRead " << ntokens_  / 1000000 << "M words" << std::flush;
@@ -553,7 +585,7 @@ void Dictionary::reset(std::istream& in) const {
 int32_t Dictionary::getLine(std::istream& in,
                             std::vector<int32_t>& words,
                             std::minstd_rand& rng) const {
-  std::cout << "[neo] [getLine] (skipgram)" << std::endl;
+  // std::cout << "[neo] [getLine] (skipgram)" << std::endl;
   std::uniform_real_distribution<> uniform(0, 1);
   std::string token;
   int32_t ntokens = 0;
@@ -564,7 +596,7 @@ int32_t Dictionary::getLine(std::istream& in,
   //while (readWord(in, token)) {
   while (readJamoWord(in, token)) {
   //while (readSyllable(in, token)) {
-    std::cout << "    (while/getLine/skipgram):(" << token << ")" << std::endl;
+    // std::cout << "    (while/getLine/skipgram):(" << token << ")" << std::endl;
     int32_t h = find(token);
     int32_t wid = word2int_[h];
     if (wid < 0) continue;
@@ -582,7 +614,7 @@ int32_t Dictionary::getLine(std::istream& in,
 int32_t Dictionary::getLine(std::istream& in,
                             std::vector<int32_t>& words,
                             std::vector<int32_t>& labels) const {
-  std::cout << "[neo] [getLine] (classifier)" << std::endl;
+  // std::cout << "[neo] [getLine] (classifier)" << std::endl;
   std::vector<int32_t> word_hashes;
   std::string token;
   int32_t ntokens = 0;
