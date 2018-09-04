@@ -404,8 +404,9 @@ bool Dictionary::readJamoWord(std::istream& in, std::string& word) const
       }
     } else if ((c & 0xC0) == 0x80) {  // inside/end byte of multi-byte characters
       if (word.empty()) {
-        throw std::invalid_argument(
-          "Invalid byte sequence in the utf8 encoding(1): " + std::to_string(c));
+        // throw std::invalid_argument(
+        //   "Invalid byte sequence in the utf8 encoding(1): " + std::to_string(c));
+        continue;
       } else {
         if (curCharLen == 1) {
           throw std::invalid_argument(
