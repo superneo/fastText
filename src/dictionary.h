@@ -99,7 +99,6 @@ class Dictionary {
     void readFromFile(std::istream&);
     bool readSyllable(std::istream&, std::string&) const;  // [neo]
     bool readJamoWord(std::istream&, std::string&) const;  // [neo]
-    void readJamoWordsFromFile(std::istream&);  // [neo]
     std::string getLabel(int32_t) const;
     void save(std::ostream&) const;
     void load(std::istream&);
