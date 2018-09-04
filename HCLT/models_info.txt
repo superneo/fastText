@@ -79,38 +79,47 @@
 ## syllable n-gram embedding (w3gram)
 
 # korean_go_kr skipgram learning
-./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/korean_go_kr_syllable_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/syllable/sg_kgk_syllable_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
 
 # nsmc dataset only supervised learning
-./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_only_syllable_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/syllable/sup_nsmc_only_syllable_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
 
 # nsmc dataset only prediction with probabilities
-./fasttext predict-prob HCLT/models/nsmc_only_syllable_w3gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_only_syllable_w3gram.predict
+./fasttext predict-prob HCLT/models/syllable/sup_nsmc_only_syllable_w3gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/syllable/pred_nsmc_only_syllable_w3gram.predict
 
 # nsmc dataset only prediction with probabilities evaluation
-./eval_predictions.py data/nsmc_test.txt preds/nsmc_only_syllable_w3gram.predict evals/nsmc_only_syllable_w3gram.txt
+./eval_predictions.py data/nsmc_test.txt preds/syllable/pred_nsmc_only_syllable_w3gram.predict evals/syllable/eval_nsmc_only_syllable_w3gram.txt
 
 
 # korean_go_kr word embedding + nsmc dataset supervised learning
-./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/nsmc_kgk_syllable_w3gram -pretrainedVectors HCLT/models/korean_go_kr_syllable_w3gram.vec -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/syllable/sup_nsmc_kgk_syllable_w3gram -pretrainedVectors HCLT/models/syllable/sg_kgk_syllable_w3gram.vec -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
 
 # korean_go_kr word embedding + nsmc dataset prediction with probabilities
-./fasttext predict-prob HCLT/models/nsmc_kgk_syllable_w3gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/nsmc_kgk_syllable_w3gram.predict
+./fasttext predict-prob HCLT/models/syllable/sup_nsmc_kgk_syllable_w3gram.bin HCLT/data/nsmc_test.txt > HCLT/preds/syllable/pred_nsmc_kgk_syllable_w3gram.predict
 
 # korean_go_kr word embedding + nsmc dataset prediction with probabilities evaluation
-./eval_predictions.py data/nsmc_test.txt preds/nsmc_kgk_syllable_w3gram.predict evals/nsmc_kgk_syllable_w3gram.txt
+./eval_predictions.py data/nsmc_test.txt preds/syllable/pred_nsmc_kgk_syllable_w3gram.predict evals/syllable/eval_nsmc_kgk_syllable_w3gram.txt
 
 -------------------------------------------------------------------------------------------
 
 ## jamo n-gram embedding (test)
 
-./fasttext skipgram -input HCLT/data/toy_corpus.txt -output HCLT/models/jamo/sg_toy_jamo_w1gram -jamoLevel -lr 0.025 -dim 100 -ws 2 -epoch 1 -minCount 1 -neg 2 -loss ns -bucket 2000000 -wordNgrams 1 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 10 -t 1e-4 -lrUpdateRate 10
+# toy_corpus skipgram learning
+./fasttext skipgram -input HCLT/data/toy_corpus.txt -output HCLT/models/jamo/sg_toy_jamo_w1gram -jamoLevel -lr 0.025 -dim 100 -ws 2 -epoch 1 -minCount 1 -neg 2 -loss ns -bucket 2000000 -wordNgrams 1 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 10
+
+# nsmc dataset only supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/jamo/sup_toy_nsmc_only_jamo_w1gram -jamoLevel -lr 0.025 -dim 100 -ws 2 -epoch 1 -minCount 1 -neg 2 -loss ns -bucket 2000000 -wordNgrams 1 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 10
 
 -------------------------------------------------------------------------------------------
 
 ## jamo n-gram embedding (w3gram)
 
-./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/jamo/sg_kgk_jamo_w3gram -jamoLevel -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 1 -t 1e-4 -lrUpdateRate 100
+# korean_go_kr skipgram learning
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/jamo/sg_kgk_jamo_w3gram -jamoLevel -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/jamo/sup_nsmc_only_jamo_w3gram -jamoLevel -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 100
+
 
 ===================================================================================================================================================
 
