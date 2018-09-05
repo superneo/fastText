@@ -147,6 +147,10 @@ void Args::parseArgs(const std::vector<std::string>& args) {
         minnJamo = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-maxnJamo") {
         maxnJamo = std::stoi(args.at(ai + 1));
+      } else if (args[ai] == "-minnCompact") {  // [neo]
+        minnCompact = std::stoi(args.at(ai + 1));
+      } else if (args[ai] == "-maxnCompact") {
+        maxnCompact = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-thread") {
         thread = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-t") {
@@ -157,8 +161,14 @@ void Args::parseArgs(const std::vector<std::string>& args) {
         verbose = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-pretrainedVectors") {
         pretrainedVectors = std::string(args.at(ai + 1));
-      } else if (args[ai] == "-jamoLevel") {
+      } else if (args[ai] == "-jamoLevel") {  // [neo]
         jamoLevel = true;
+        ai--;
+      } else if (args[ai] == "-sylLevel") {  // [neo]
+        sylLevel = true;
+        ai--;
+      } else if (args[ai] == "-compactLevel") {  // [neo]
+        compactLevel = true;
         ai--;
       } else if (args[ai] == "-saveOutput") {
         saveOutput = true;

@@ -223,6 +223,27 @@ void Dictionary::computeJamoSubwords(const std::string& word,
   }
 }
 
+// [neo]
+void Dictionary::computeCompactLineSubwords(const std::string& word,
+                                            std::vector<int32_t>& ngrams) const {
+  // std::cout << "[neo] [computeCompactLineSubwords] word: " << word << std::endl;
+  for (size_t i = 0; i < word.size(); i++) {
+    std::string ngram;
+    if ((word[i] & 0xC0) == 0x80) continue;
+    for (size_t j = i, n = 1; j < word.size() && n <= args_->maxnCompact; n++) {
+      ngram.push_back(word[j++]);
+      while (j < word.size() && (word[j] & 0xC0) == 0x80) {
+        ngram.push_back(word[j++]);
+      }
+      if (n >= args_->minnCompact && !(n == 1 && (i == 0 || j == word.size()))) {
+        int32_t h = hash(ngram) % args_->bucket;
+        //pushHash(ngrams, h);
+        ngrams.push_back(nwords_ + h);  // [neo]
+      }
+    }
+  }
+}
+
 void Dictionary::initNgrams() {
   for (size_t i = 0; i < size_; i++) {
     std::string word = BOW + words_[i].word + EOW;
@@ -278,9 +299,21 @@ bool Dictionary::readWord(std::istream& in, std::string& word) const
 void Dictionary::readFromFile(std::istream& in) {
   std::string word;
   int64_t minThreshold = 1;
-  // while (readWord(in, word)) {  // [neo]
-  while (readJamoWord(in, word)) {  // [neo]
-  //while (readSyllable(in, word)) {  // [neo]
+
+  bool (Dictionary::*f)(std::istream&, std::string&) const;  // [neo]
+
+  // [neo]
+  if (args_->jamoLevel) {
+    f = &Dictionary::readJamoWord;
+  } else if (args_->sylLevel) {
+    f = &Dictionary::readSyllable;
+  } else if (args_->compactLevel) {
+    f = &Dictionary::readSyllable;
+  } else {
+    f = &Dictionary::readWord;
+  }
+
+  while ((this->*f)(in, word)) {  // [neo]
     add(word);
     if (ntokens_ % 1000000 == 0 && args_->verbose > 1) {
       std::cerr << "\rRead " << ntokens_  / 1000000 << "M words" << std::flush;
@@ -561,13 +594,26 @@ int32_t Dictionary::getLine(std::istream& in,
   std::uniform_real_distribution<> uniform(0, 1);
   std::string token;
   int32_t ntokens = 0;
+  int32_t mode_line_size_limit = MAX_LINE_SIZE;  // [neo]
+
+  bool (Dictionary::*f)(std::istream&, std::string&) const;  // [neo]
+
+  // [neo]
+  if (args_->jamoLevel) {
+    f = &Dictionary::readJamoWord;
+    mode_line_size_limit = MAX_LINE_SIZE * 10;
+  } else if (args_->sylLevel) {
+    f = &Dictionary::readSyllable;
+  } else if (args_->compactLevel) {
+    f = &Dictionary::readSyllable;
+  } else {
+    f = &Dictionary::readWord;
+  }
 
   reset(in);
   words.clear();
-  // [neo]
-  //while (readWord(in, token)) {
-  while (readJamoWord(in, token)) {
-  //while (readSyllable(in, token)) {
+  // while (readWord(in, token)) {
+  while ((this->*f)(in, token)) {  // [neo]
     // std::cout << "    (while/getLine/skipgram):(" << token << ")" << std::endl;
     int32_t h = find(token);
     int32_t wid = word2int_[h];
@@ -577,7 +623,8 @@ int32_t Dictionary::getLine(std::istream& in,
     if (getType(wid) == entry_type::word && !discard(wid, uniform(rng))) {
       words.push_back(wid);
     }
-    if (ntokens > MAX_LINE_SIZE || token == EOS) break;
+    // if (ntokens > MAX_LINE_SIZE || token == EOS) break;
+    if (ntokens > mode_line_size_limit || token == EOS) break;  // [neo]
   }
   return ntokens;
 }
@@ -591,25 +638,42 @@ int32_t Dictionary::getLine(std::istream& in,
   std::string token;
   int32_t ntokens = 0;
 
+  bool (Dictionary::*f)(std::istream&, std::string&) const;  // [neo]
+  std::string compact_line;  // [neo]
+
+  // [neo]
+  if (args_->jamoLevel) {
+    f = &Dictionary::readJamoWord;
+  } else if (args_->sylLevel) {
+    f = &Dictionary::readSyllable;
+  } else if (args_->compactLevel) {
+    f = &Dictionary::readSyllable;
+  } else {
+    f = &Dictionary::readWord;
+  }
+
   reset(in);
   words.clear();
   labels.clear();
-  // [neo]
   //while (readWord(in, token)) {
-  while (readJamoWord(in, token)) {
-  //while (readSyllable(in, token)) {
+  while ((this->*f)(in, token)) {  // [neo]
+    // std::cout << "    (while/getLine/classifier):(" << token << ")" << std::endl;
     uint32_t h = hash(token);
     int32_t wid = getId(token, h);
     entry_type type = wid < 0 ? getType(token) : getType(wid);
 
     ntokens++;
     if (type == entry_type::word) {
+      if (token != EOS) compact_line += token;  // [neo]
       addSubwords(words, token, wid);
       word_hashes.push_back(h);
     } else if (type == entry_type::label && wid >= 0) {
       labels.push_back(wid - nwords_);
     }
     if (token == EOS) break;
+  }
+  if (args_->compactLevel) {
+    computeCompactLineSubwords(BOW + compact_line + EOW, words);
   }
   addWordNgrams(words, word_hashes, args_->wordNgrams);
   return ntokens;

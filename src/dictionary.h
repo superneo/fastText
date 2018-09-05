@@ -93,6 +93,7 @@ class Dictionary {
         std::vector<int32_t>&,
         std::vector<std::string>&) const;
     void computeJamoSubwords(const std::string&, std::vector<int32_t>&) const;  // [neo]
+    void computeCompactLineSubwords(const std::string&, std::vector<int32_t>&) const;  // [neo]
     uint32_t hash(const std::string& str) const;
     void add(const std::string&);
     bool readWord(std::istream&, std::string&) const;

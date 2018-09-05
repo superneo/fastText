@@ -45,12 +45,16 @@ class Args {
     int maxn;  // [neo] max subword (eumjeol) n-gram size
     int minnJamo;  // [neo] min subword jamo-level n-gram size
     int maxnJamo;  // [neo] max subword jamo-level n-gram size
+    int minnCompact; // [neo] min compact-line subword (eumjeol) n-gram size
+    int maxnCompact; // [neo] max compact-line subword (eumjeol) n-gram size
     int thread;
     double t;
     std::string label;
     int verbose;
     std::string pretrainedVectors;
     bool jamoLevel;  // [neo] a flag to tell if running in jamo level
+    bool sylLevel;  // [neo] a flag to tell if running in syllable level
+    bool compactLevel;  // [neo] a flag to tell if running in 'space error robust' mode
     bool saveOutput;
 
     bool qout;

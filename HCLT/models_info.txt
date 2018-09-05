@@ -79,7 +79,7 @@
 ## syllable n-gram embedding (w3gram)
 
 # korean_go_kr skipgram learning
-./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/syllable/sg_kgk_syllable_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/syllable/sg_kgk_syllable_ep10min5n5 -sylLevel -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -minn 0 -maxn 0 -thread 12 -t 1e-4 -lrUpdateRate 100
 
 # nsmc dataset only supervised learning
 ./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/syllable/sup_nsmc_only_syllable_w3gram -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -thread 10 -t 1e-4 -lrUpdateRate 100
@@ -102,24 +102,56 @@
 
 -------------------------------------------------------------------------------------------
 
-## jamo n-gram embedding (test)
+## jamo n-gram embedding (toy)
 
 # toy_corpus skipgram learning
 ./fasttext skipgram -input HCLT/data/toy_corpus.txt -output HCLT/models/jamo/sg_toy_jamo_w1gram -jamoLevel -lr 0.025 -dim 100 -ws 2 -epoch 1 -minCount 1 -neg 2 -loss ns -bucket 2000000 -wordNgrams 1 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 10
-
-# nsmc dataset only supervised learning
-./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/jamo/sup_toy_nsmc_only_jamo_w1gram -jamoLevel -lr 0.025 -dim 100 -ws 2 -epoch 1 -minCount 1 -neg 2 -loss ns -bucket 2000000 -wordNgrams 1 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 10
 
 -------------------------------------------------------------------------------------------
 
 ## jamo n-gram embedding (w3gram)
 
 # korean_go_kr skipgram learning
-./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/jamo/sg_kgk_jamo_w3gram -jamoLevel -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 100
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/jamo/sg_kgk_jamo_w3gram_12threads -jamoLevel -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 100
 
 # nsmc dataset only supervised learning
-./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/jamo/sup_nsmc_only_jamo_w3gram -jamoLevel -lr 0.025 -dim 100 -ws 5 -epoch 10 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 12 -t 1e-4 -lrUpdateRate 100
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/jamo/sup_nsmc_only_jamo_w3gram -jamoLevel -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 1 -maxn 4 -minnJamo 3 -maxnJamo 5 -thread 20 -t 1e-4 -lrUpdateRate 100
 
+-------------------------------------------------------------------------------------------
+
+## compact n-gram embedding (toy)
+
+# toy_corpus skipgram learning
+./fasttext skipgram -input HCLT/data/toy_corpus.txt -output HCLT/models/compact/sg_toy_compact_ep5min1n3 -compactLevel -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 1 -neg 3 -loss ns -bucket 2000000 -minn 0 -maxn 0 -thread 12 -t 1e-4 -lrUpdateRate 10
+
+# toy nsmc dataset only supervised learning
+./fasttext supervised -input HCLT/data/toy_nsmc_train.txt -output HCLT/models/compact/sup_toy_nsmc_only_compact_w3gram_20threads -compactLevel -lr 0.025 -dim 100 -ws 5 -epoch 1 -minCount 1 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -minnCompact 1 -maxnCompact 3 -thread 20 -t 1e-4 -lrUpdateRate 100
+
+-------------------------------------------------------------------------------------------
+
+## compact n-gram embedding (w3gram)
+
+# korean_go_kr skipgram learning
+./fasttext skipgram -input HCLT/data/korean_go_kr_sortuniqed.txt -output HCLT/models/compact/sg_kgk_compact_w3gram_20threads -compactLevel -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 5 -neg 5 -loss ns -bucket 2000000 -minn 0 -maxn 0 -thread 20 -t 1e-4 -lrUpdateRate 10
+
+# nsmc dataset only supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/compact/sup_nsmc_only_compact_w3gram_20threads -compactLevel -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -minnCompact 1 -maxnCompact 3 -thread 20 -t 1e-4 -lrUpdateRate 100
+
+# nsmc dataset only prediction with probabilities
+./fasttext predict-prob HCLT/models/compact/sup_nsmc_only_compact_w3gram_20threads.bin HCLT/data/nsmc_test_space.txt > HCLT/preds/compact/pred_nsmc_only_compact_w3gram_20threads.predict
+
+# nsmc dataset only prediction with probabilities evaluation
+./HCLT/eval_predictions.py HCLT/data/nsmc_test_space.txt HCLT/preds/compact/pred_nsmc_only_compact_w3gram_20threads.predict HCLT/evals/compact/eval_nsmc_only_compact_w3gram_20threads.txt
+
+
+# korean_go_kr word embedding + nsmc dataset supervised learning
+./fasttext supervised -input HCLT/data/nsmc_train.txt -output HCLT/models/compact/sup_nsmc_kgk_compact_w3gram_20threads -pretrainedVectors HCLT/models/compact/sg_kgk_compact_w3gram_20threads.vec -compactLevel -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 5 -neg 5 -loss ns -bucket 2000000 -wordNgrams 3 -minn 0 -maxn 0 -minnCompact 1 -maxnCompact 3 -thread 20 -t 1e-4 -lrUpdateRate 100
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities
+./fasttext predict-prob HCLT/models/compact/sup_nsmc_kgk_compact_w3gram_20threads.bin HCLT/data/nsmc_test_space.txt > HCLT/preds/compact/pred_nsmc_kgk_compact_w3gram_20threads.predict
+
+# korean_go_kr word embedding + nsmc dataset prediction with probabilities evaluation
+./HCLT/eval_predictions.py HCLT/data/nsmc_test_space.txt HCLT/preds/compact/pred_nsmc_kgk_compact_w3gram_20threads.predict HCLT/evals/compact/eval_nsmc_kgk_compact_w3gram_20threads.txt
 
 ===================================================================================================================================================
 
