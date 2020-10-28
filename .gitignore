@@ -2,9 +2,14 @@
 *.o
 *.bin
 *.vec
+*.bc
+.DS_Store
 data
 fasttext
 result
+website/node_modules/
+package-lock.json
+node_modules/
 
 # OS generated files #
 ######################
@@ -20,4 +25,3 @@ HCLT/data
 HCLT/evals
 HCLT/models
 HCLT/preds
-
