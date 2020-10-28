@@ -71,8 +71,8 @@ fasttext.o: src/fasttext.cc src/*.h
 fasttext: $(OBJS) src/fasttext.cc src/main.cc
 	$(CXX) $(CXXFLAGS) $(OBJS) src/main.cc -o fasttext
 
-break_korean_test: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) src/break_korean_test.cc -o break_korean_test
+#break_korean_test: $(OBJS)
+#	$(CXX) $(CXXFLAGS) $(OBJS) src/break_korean_test.cc -o break_korean_test
 
 clean:
 	rm -rf *.o *.gcno *.gcda fasttext *.bc webassembly/fasttext_wasm.js webassembly/fasttext_wasm.wasm
