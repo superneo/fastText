@@ -50,13 +50,20 @@ class Args {
   loss_name loss;
   model_name model;
   int bucket;
-  int minn;
-  int maxn;
+  int minn;  // [neo] min subword (eumjeol) n-gram size
+  int maxn;  // [neo] max subword (eumjeol) n-gram size
+  int minnJamo;  // [neo] min subword jamo-level n-gram size
+  int maxnJamo;  // [neo] max subword jamo-level n-gram size
+  int minnCompact; // [neo] min compact-line subword (eumjeol) n-gram size
+  int maxnCompact; // [neo] max compact-line subword (eumjeol) n-gram size
   int thread;
   double t;
   std::string label;
   int verbose;
   std::string pretrainedVectors;
+  bool jamoLevel;  // [neo] a flag to tell if running in jamo level
+  bool sylLevel;  // [neo] a flag to tell if running in syllable level
+  bool compactLevel;  // [neo] a flag to tell if running in 'space error robust' mode
   bool saveOutput;
   int seed;
 
@@ -66,45 +73,11 @@ class Args {
   size_t cutoff;
   size_t dsub;
 
-<<<<<<< HEAD
-  public:
-    Args();
-    std::string input;
-    std::string output;
-    double lr;
-    int lrUpdateRate;
-    int dim;
-    int ws;
-    int epoch;
-    int minCount;
-    int minCountLabel;
-    int neg;
-    int wordNgrams;
-    loss_name loss;
-    model_name model;
-    int bucket;
-    int minn;  // [neo] min subword (eumjeol) n-gram size
-    int maxn;  // [neo] max subword (eumjeol) n-gram size
-    int minnJamo;  // [neo] min subword jamo-level n-gram size
-    int maxnJamo;  // [neo] max subword jamo-level n-gram size
-    int minnCompact; // [neo] min compact-line subword (eumjeol) n-gram size
-    int maxnCompact; // [neo] max compact-line subword (eumjeol) n-gram size
-    int thread;
-    double t;
-    std::string label;
-    int verbose;
-    std::string pretrainedVectors;
-    bool jamoLevel;  // [neo] a flag to tell if running in jamo level
-    bool sylLevel;  // [neo] a flag to tell if running in syllable level
-    bool compactLevel;  // [neo] a flag to tell if running in 'space error robust' mode
-    bool saveOutput;
-=======
   std::string autotuneValidationFile;
   std::string autotuneMetric;
   int autotunePredictions;
   int autotuneDuration;
   std::string autotuneModelSize;
->>>>>>> a20c0d27cd0ee88a25ea0433b7f03038cd728459
 
   void parseArgs(const std::vector<std::string>& args);
   void printHelp();
